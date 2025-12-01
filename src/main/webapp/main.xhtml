@@ -1,0 +1,202 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ace="http://www.icefaces.org/icefaces/components"
+                template="/resources/templates/base.xhtml">
+
+    <ui:define name="title">Основная</ui:define>
+
+    <ui:define name="content">
+        <h:form id="mainForm">
+            <p:messages id="msgs" showDetail="true" closable="true"/>
+
+
+            <div class="layout">
+
+                <h:panelGroup id="graph" layout="block" styleClass="left">
+                    <svg id="graphSvg" width="300" height="300"
+                         xmlns="http://www.w3.org/2000/svg"
+                         onclick="handleGraphClick(event)">
+                        <!-- оси -->
+                        <line x1="0" x2="285" y1="150" y2="150" stroke="#333" stroke-width="2"/>
+                        <line x1="150" x2="150" y1="15" y2="300" stroke="#333" stroke-width="2"/>
+
+                        <polygon points="150,0 144,15 156,15" fill="#333" stroke="none"/>
+                        <polygon points="300,150 285,156 285,144" fill="#333" stroke="none"/>
+
+                        <!-- фигуры -->
+                        <rect class="figures" x="100"  y="50" width="50" height="100"/>
+                        <polygon class="figures" points="100,150 150,150 150,250"/>
+                        <path class="figures" d="M 250 150  A 100 100 0 0 1 150 250 L 150 150 Z"/>
+
+                        <!-- засечки и подписи -->
+                        <line x1="250" x2="250" y1="145" y2="155"/>
+                        <line x1="200" x2="200" y1="145" y2="155"/>
+                        <line x1="50"  x2="50"  y1="145" y2="155"/>
+                        <line x1="100" x2="100" y1="145" y2="155"/>
+                        <line x1="145" x2="155" y1="50"  y2="50"/>
+                        <line x1="145" x2="155" y1="250" y2="250"/>
+                        <line x1="145" x2="155" y1="100" y2="100"/>
+                        <line x1="145" x2="155" y1="200" y2="200"/>
+
+                        <text x="285" y="140">x</text>
+                        <text x="155" y="13">y</text>
+                        <text x="195" y="140">R/2</text>
+                        <text x="253" y="140">R</text>
+                        <text x="30"  y="140">-R</text>
+                        <text x="87"  y="140">-R/2</text>
+                        <text x="160" y="105">R/2</text>
+                        <text x="160" y="52">R</text>
+                        <text x="160" y="205">-R/2</text>
+                        <text x="160" y="260">-R</text>
+
+                        <!-- точки из истории -->
+                        <ui:repeat value="#{resultController.results}" var="row">
+                            <circle r="3"
+                                    cx="#{150 + (row.x / row.r) * 100}"
+                                    cy="#{150 - (row.y / row.r) * 100}"
+                                    fill="#{row.hit ? 'green' : 'red'}"/>
+                        </ui:repeat>
+                    </svg>
+                    <div id="message"></div>
+                </h:panelGroup>
+
+
+                <div class="right">
+                    <h3>Ввод координат</h3>
+
+
+                    <div class="row">
+                        <label for="x">X:</label>
+                        <h:inputText id="x"
+                                     value="#{resultController.x}"
+                                     maxlength="16"
+                                     styleClass="text-input"
+                                     converterMessage="X должен быть числом"
+                                     validatorMessage="X должен быть в диапазоне [-3; 5]">
+                            <f:convertNumber/>
+                            <f:validateDoubleRange minimum="-3" maximum="5"/>
+                        </h:inputText>
+                    </div>
+
+
+                    <div class="row">
+                        <label for="ySlider">Y:</label>
+
+                        <h:inputHidden id="yValue" value="#{resultController.y}">
+                            <f:convertNumber/>
+                            <f:validateDoubleRange minimum="-4" maximum="4"/>
+                        </h:inputHidden>
+
+                        <input id="ySlider" type="range"
+                               min="-4" max="4" step="1"
+                               value="#{resultController.y}"
+                               oninput="document.getElementById('mainForm:yValue').value=this.value;
+                                        document.getElementById('mainForm:yOut').innerText=this.value;" />
+
+                        <span class="value-badge">
+                            <h:outputText id="yOut" value="#{resultController.y}"/>
+                        </span>
+                    </div>
+
+
+                    <div class="row">
+                        <label>R:</label>
+
+                        <h:inputHidden id="rValue" value="#{resultController.r}">
+                            <f:convertNumber locale="en_US"
+                                             minFractionDigits="1"
+                                             maxFractionDigits="1"/>
+                        </h:inputHidden>
+
+                        <ace:sliderEntry id="rSlider"
+                                         value="#{resultController.currentR}"
+                                         min="1"
+                                         max="7"
+                                         length="250px"
+                                         styleClass="custom-slider">
+                            <ace:ajax event="slideEnd" execute="@this" render="rOut rValue graph msgs"/>
+                        </ace:sliderEntry>
+
+                        <span class="value-badge">
+                            <h:outputText id="rOut" value="#{resultController.r}">
+                                <f:convertNumber minFractionDigits="1" />
+                            </h:outputText>
+                        </span>
+                    </div>
+
+                    <!-- кнопочки -->
+                    <div class="row buttons">
+                        <h:commandButton value="Проверить"
+                                         action="#{resultController.submit}"
+                                         styleClass="pf-btn" />
+
+                        <h:commandButton value="Очистить историю"
+                                         action="#{resultController.clear}"
+                                         immediate="true"
+                                         styleClass="pf-btn btn-ghost" />
+
+                        <h:link outcome="home" value="На стартовую"
+                                styleClass="btn btn-ghost"/>
+                    </div>
+
+                    <h:commandButton id="hiddenSubmit"
+                                     action="#{resultController.submit}"
+                                     style="display:none"/>
+
+                </div>
+
+            </div>
+
+            <!-- скрол + табл. -->
+            <div class="table-container">
+                <h:dataTable value="#{resultController.results}" var="r"
+                             styleClass="native-table">
+
+
+                    <h:column>
+                        <f:facet name="header">X</f:facet>
+                        #{r.x}
+                    </h:column>
+
+
+                    <h:column>
+                        <f:facet name="header">Y</f:facet>
+                        #{r.y}
+                    </h:column>
+
+
+                    <h:column>
+                        <f:facet name="header">R</f:facet>
+                        #{r.r}
+                    </h:column>
+
+
+                    <h:column>
+                        <f:facet name="header">Попадание</f:facet>
+                        <h:outputText value="#{r.hit ? 'Да' : 'Нет'}"
+                                      styleClass="#{r.hit ? 'text-ok' : 'text-bad'}"/>
+                    </h:column>
+
+                    <h:column>
+                        <f:facet name="header">Время</f:facet>
+                        <h:outputText value="#{r.createdAt}">
+                            <f:convertDateTime pattern="dd.MM.yyyy HH:mm:ss" type="localDateTime"/>
+                        </h:outputText>
+                    </h:column>
+
+
+                    <h:column>
+                        <f:facet name="header">Вып. (мс)</f:facet>
+                        #{r.execMs}
+                    </h:column>
+
+                </h:dataTable>
+            </div>
+
+
+        </h:form>
+    </ui:define>
+</ui:composition>

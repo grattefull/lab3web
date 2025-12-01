@@ -1,0 +1,20 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/resources/templates/base.xhtml">
+
+    <ui:define name="title">Старт</ui:define>
+
+    <ui:define name="content">
+        <h:panelGroup layout="block" styleClass="card">
+            <h2>Проверка попадания точки</h2>
+            <p id="clock" class="clock"></p>
+            <script>
+                updateClock('clock');
+                setInterval(function(){ updateClock('clock'); }, 13000);
+            </script>
+            <h:link outcome="main" value="Перейти на основную страницу" styleClass="btn"/>
+        </h:panelGroup>
+    </ui:define>
+</ui:composition>
