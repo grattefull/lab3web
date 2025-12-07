@@ -6,11 +6,11 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
-
+// работает с таблицей результс
 @Stateless
-public class ResultService {
+public class ResultService { // управляется вайлдфлаем
 
-    @PersistenceContext(unitName = "labPU")
+    @PersistenceContext(unitName = "labPU") // типо создаю тут ем для раб. с бд в перс.хмл
     private EntityManager em;
 
     public void save(ResultEntity e) {
@@ -18,7 +18,7 @@ public class ResultService {
     }
 
     public List<ResultEntity> findBySession(String sessionId) {
-        return em.createQuery("select r from ResultEntity r " + "where r.sessionId = :sid order by r.id desc", ResultEntity.class)
+        return em.createQuery("select r from ResultEntity r " + "where r.sessionId = :sid order by r.id desc", ResultEntity.class) // самые новые
                 .setParameter("sid", sessionId)
                 .setMaxResults(200)
                 .getResultList();

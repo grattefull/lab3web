@@ -8,7 +8,7 @@
     --shadow: 0 10px 24px rgba(124, 58, 237, .15);
 }
 
-/* базовые */
+/* база */
 
 *,
 *::before,
@@ -51,11 +51,11 @@ body {
 /* контейнер страницы */
 
 .container {
-    width: min(1100px, 96%);
+    width: min(1300px, 98%);
     margin: 2% auto;
 }
 
-/* стартовая карточка */
+/* стартовая */
 
 .card {
     background: #ffffff;
@@ -90,10 +90,10 @@ body {
     box-shadow: 0 12px 24px rgba(76, 29, 149, 0.35);
 }
 
-/* "прозрачная" кнопка (На стартовую) */
+/* на стартовую */
 
 .btn.btn-ghost,
-.buttons .btn-ghost {
+.form-buttons .btn-ghost {
     background: #ffffff;
     color: #4c1d95;
     border: 1px solid #ddd7ff;
@@ -101,23 +101,34 @@ body {
 }
 
 .btn.btn-ghost:hover,
-.buttons .btn-ghost:hover {
+.form-buttons .btn-ghost:hover {
     background: #f5f3ff;
     box-shadow: 0 8px 18px rgba(124, 58, 237, 0.18);
 }
 
-/* основная страница: разметка */
+/* сообщения */
 
-.layout {
+.messages-wrapper {
+    min-height: 50px;
+    margin-bottom: 12px;
+}
+
+/* основная страница график слева, форма справа */
+
+
+.main-layout {
     width: 100%;
     display: flex;
     gap: 16px;
     flex-wrap: wrap;
+    align-items: flex-start;
     margin-top: 16px;
 }
 
-.left,
-.right {
+/* карточки слева и справа */
+
+.main-left,
+.main-right {
     flex: 1 1 420px;
     background: #fff;
     border: 1px solid var(--line);
@@ -126,19 +137,13 @@ body {
     padding: 14px 16px;
 }
 
-.left {
+/* фон под графиком */
+
+.main-left {
     background: #f6f5ff;
 }
 
-/* SVG-график */
-
-.left {
-    background: #f6f5ff;
-    border: 1px solid var(--line);
-    border-radius: 16px;
-    box-shadow: var(--shadow);
-    padding: 14px 16px;
-}
+/* свг */
 
 #graphSvg {
     box-sizing: content-box;
@@ -184,9 +189,9 @@ body {
     color: var(--bad);
 }
 
-/* ПРАВАЯ ЧАСТЬ – форма */
+/* форма */
 
-.right h3 {
+.main-right h3 {
     margin-top: 0;
     margin-bottom: 8px;
     font-size: 1.1rem;
@@ -206,7 +211,6 @@ body {
     margin-right: 4px;
 }
 
-
 .row .text-input,
 .row input[type="number"] {
     flex: 1;
@@ -224,14 +228,14 @@ body {
     box-shadow: 0 0 0 4px rgba(124, 58, 237, .18);
 }
 
-
+/* слайдеры */
 
 .ui-slider,
 .y-slider {
     margin: 0 8px;
 }
 
-/* пузырь с текущим значением слайдера */
+/* пузырек с текущим значением слайдера */
 
 .value-badge {
     display: inline-flex;
@@ -246,15 +250,17 @@ body {
     font-size: 0.75rem;
 }
 
-/* кнопки формы  */
+/* кнопки формы */
 
-.buttons {
+.form-buttons {
     margin-top: 8px;
     gap: 8px;
+    display: flex;
+    flex-wrap: wrap;
 }
 
-.buttons .ui-button,
-.buttons button,
+.form-buttons .ui-button,
+.form-buttons button,
 button {
     border: 0;
     border-radius: 999px;
@@ -268,45 +274,44 @@ button {
     box-shadow: 0 10px 22px rgba(124, 58, 237, .25);
 }
 
-.buttons .ui-button:hover,
+.form-buttons .ui-button:hover,
 button:hover {
     transform: translateY(-1px);
 }
 
-/* таблица результатов  */
 
-.table {
-    margin-top: 10px;
-    background: #ffffff;
-    border-radius: 14px;
-    border: 1px solid var(--line);
-    box-shadow: var(--shadow);
-}
 
-/* стандартный рендерер pf */
-.ui-datatable table {
-    width: auto;           /* по контенту, а не 100% */
-    border-collapse: separate;
-    border-spacing: 0;
-}
-
-.ui-datatable thead th {
-    background: #fbfaff;
+.form-buttons input[type="submit"].pf-btn {
+    border: 0;
+    border-radius: 999px;
+    padding: .7rem 1.1rem;
     font-weight: 800;
-    color: #3b2a60;
-    padding: .6rem .7rem;
-    text-align: center;
-    border-bottom: 1px solid var(--line);
+    cursor: pointer;
+    margin: .5rem .25rem 0 0;
+    transition: transform .04s ease, box-shadow .18s ease;
+    background: linear-gradient(180deg, var(--brand), #6d28d9);
+    color: #fff;
+    box-shadow: 0 10px 22px rgba(124, 58, 237, .25);
 }
 
-.ui-datatable tbody td {
-    border-top: 1px solid var(--line);
-    padding: .7rem .85rem;
-    text-align: center;
-    font-size: .9rem;
+.form-buttons input[type="submit"].pf-btn:hover {
+    transform: translateY(-1px);
 }
 
-/* цвет статуса «попадание»/«промах» */
+/* типо прозрачная версия */
+.form-buttons input[type="submit"].pf-btn.btn-ghost {
+    background: #ffffff;
+    color: #4c1d95;
+    border: 1px solid #ddd7ff;
+    box-shadow: none;
+}
+
+.form-buttons input[type="submit"].pf-btn.btn-ghost:hover {
+    background: #f5f3ff;
+    box-shadow: 0 8px 18px rgba(124, 58, 237, 0.18);
+}
+
+/* таблица результатов */
 
 .text-ok {
     color: var(--ok);
@@ -316,27 +321,9 @@ button:hover {
     color: var(--bad);
 }
 
-/* для мобилok */
 
-@media (max-width: 700px) {
-    .row {
-        flex-direction: column;
-        align-items: flex-start;
-    }
 
-    .row label {
-        width: auto;
-        text-align: left;
-        margin-bottom: 2px;
-    }
-
-    .ui-datatable thead th {
-        font-size: .85rem;
-        padding: .5rem .6rem;
-    }
-}
-
-/* y: слайдер на input[type=range] */
+/* y слайдер на input[type=range] */
 
 .y-slider {
     -webkit-appearance: none;
@@ -348,14 +335,13 @@ button:hover {
     outline: none;
 }
 
-
 .y-slider::-webkit-slider-runnable-track {
     height: 6px;
     border-radius: 999px;
     background: #e5ddff;
 }
 
-/* бегунок WebKit */
+/* бегунок */
 .y-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
@@ -369,14 +355,14 @@ button:hover {
     cursor: pointer;
 }
 
-/* дорожка Firefox */
+/* дорожка файрфокс */
 .y-slider::-moz-range-track {
     height: 6px;
     border-radius: 999px;
     background: #e5ddff;
 }
 
-/* бегунок Firefox */
+/* бегунок файрфокс */
 .y-slider::-moz-range-thumb {
     width: 16px;
     height: 16px;
@@ -387,7 +373,7 @@ button:hover {
     cursor: pointer;
 }
 
-/* дорожка IE/Edge (старые) */
+
 .y-slider::-ms-track {
     height: 6px;
     border-radius: 999px;
@@ -401,7 +387,7 @@ button:hover {
     background: #e5ddff;
 }
 
-/* бегунок IE/Edge */
+
 .y-slider::-ms-thumb {
     width: 16px;
     height: 16px;
@@ -460,46 +446,13 @@ button:hover {
     display: none !important;
 }
 
-/*  h:commandButton (input type="submit")  */
+/* таблица */
 
-.buttons input[type="submit"].pf-btn {
-    border: 0;
-    border-radius: 999px;
-    padding: .7rem 1.1rem;
-    font-weight: 800;
-    cursor: pointer;
-    margin: .5rem .25rem 0 0;
-    transition: transform .04s ease, box-shadow .18s ease;
-    background: linear-gradient(180deg, var(--brand), #6d28d9);
-    color: #fff;
-    box-shadow: 0 10px 22px rgba(124, 58, 237, .25);
-}
-
-.buttons input[type="submit"].pf-btn:hover {
-    transform: translateY(-1px);
-}
-
-/* типо прозрачная версия */
-.buttons input[type="submit"].pf-btn.btn-ghost {
-    background: #ffffff;
-    color: #4c1d95;
-    border: 1px solid #ddd7ff;
-    box-shadow: none;
-}
-
-.buttons input[type="submit"].pf-btn.btn-ghost:hover {
-    background: #f5f3ff;
-    box-shadow: 0 8px 18px rgba(124, 58, 237, 0.18);
-}
-
-
-/* таблица*/
-
-/* Обертка для скролла */
 .table-container {
     margin-top: 20px;
-    max-height: 250px;       /* высота скрола */
-    overflow-y: auto;        /*  вертикальный скролл */
+    max-height: 250px;
+    overflow-y: auto;
+    overflow-x: hidden;
 
     border: 1px solid var(--line);
     border-radius: 12px;
@@ -507,49 +460,73 @@ button:hover {
     background: #fff;
 }
 
-/* таблица */
+
+/* обёртка для таблицы */
+.table-container {
+    margin-top: 20px;
+    max-height: 250px;
+    overflow-y: auto;
+
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    background: #fff;
+}
+
+/* табличка */
 .native-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
 }
 
-/*  */
+/* шапка таблицы */
 .native-table th {
     background: #f8f7ff;
     color: #4c1d95;
     font-weight: 800;
-    padding: 12px;
+    padding: 10px;
     text-align: center;
     border-bottom: 2px solid var(--line);
-
 
     position: sticky;
     top: 0;
     z-index: 2;
     box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    white-space: nowrap;
 }
 
-
+/* ячейки */
 .native-table td {
-    padding: 10px;
+    padding: 8px;
     border-bottom: 1px solid #f1f1f1;
     color: var(--ink);
     text-align: center;
     white-space: nowrap;
 }
 
-
 .native-table tr:nth-child(even) { background: #fafaff; }
 .native-table tr:hover { background: #f3f0ff; }
 
 
-.text-ok { color: var(--ok); font-weight: bold; }
-.text-bad { color: var(--bad); font-weight: bold; }
 
-/* скролбар */
+
+
+.native-table tr:nth-child(even) { background: #fafaff; }
+.native-table tr:hover { background: #f3f0ff; }
+
 .table-container::-webkit-scrollbar { width: 6px; }
 .table-container::-webkit-scrollbar-track { background: #f5f5f5; }
 .table-container::-webkit-scrollbar-thumb { background: #c4b5fd; border-radius: 10px; }
 .table-container::-webkit-scrollbar-thumb:hover { background: var(--brand); }
 
+
+/* карточка формы под графиком и таблицей */
+.form-card {
+    background: #ffffff;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    padding: 14px 16px;
+    margin-top: 20px;
+}

@@ -17,29 +17,38 @@ public class ResultControllerBean implements Serializable {
     private double y = -4;       // [-4;4]
     private double r = 1.0;     // [1;4], шаг 0.5
 
+    private double graphX;
+    private double graphY;
+
+
     private int currentR;
 
     private List<ResultEntity> results;
 
-    @EJB
-    private ResultService resultService;
+    @EJB // для внедерния бина
+    private ResultService resultService; // надо крч чтобы сохранять данные в постгре
 
     private String sessionId;
 
-    @PostConstruct
+    @PostConstruct // один раз
     public void init() {
         FacesContext ctx = FacesContext.getCurrentInstance();
         sessionId = ctx.getExternalContext().getSessionId(true);
         results = resultService.findBySession(sessionId);
 
-        this.currentR = (int) Math.round((r - 1.0) / 0.5) + 1;
+        this.currentR = (int) Math.round((r - 1.0) / 0.5) + 1; // синхронизация
     }
 
     public void submit() {
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_INFO,
-                        "submit() вызван", null));
+        //FacesContext.getCurrentInstance().addMessage(null, // не к компоненту а ко всей форме
+                //new FacesMessage(FacesMessage.SEVERITY_INFO,
+                       // "submit() вызван", null)); // подробный текст
         addPoint(x, y, r);
+    }
+
+
+    public void submitFromGraph() {
+        addPoint(graphX, graphY, r);
     }
 
 
@@ -52,17 +61,19 @@ public class ResultControllerBean implements Serializable {
                         "История очищена", null));
     }
 
-    private void addPoint(double x, double y, double r) {
-        if (!validate(x, y, r)) return;
+    private void addPoint(double px, double py, double pr) {
+
+
+        if (!validate(px, py, pr)) return;
 
         long t0 = System.nanoTime();
-        boolean hit = HitChecker.hit(x, y, r);
+        boolean hit = HitChecker.hit(px, py, pr);
         long execMs = Math.max(1, Math.round((System.nanoTime() - t0) / 1_000_000.0));
 
         ResultEntity e = new ResultEntity();
-        e.setX(x);
-        e.setY(y);
-        e.setR(r);
+        e.setX(px);
+        e.setY(py);
+        e.setR(pr);
         e.setHit(hit);
         e.setExecMs(execMs);
         e.setSessionId(sessionId);
@@ -73,25 +84,32 @@ public class ResultControllerBean implements Serializable {
         FacesContext.getCurrentInstance().addMessage(null,
                 new FacesMessage(FacesMessage.SEVERITY_INFO,
                         hit ? "Точка попала в область" : "Точка вне области", null));
+
     }
 
-    private boolean validate(double x, double y, double r) {
+    private boolean validate(double px, double py, double pr) {
         FacesContext ctx = FacesContext.getCurrentInstance();
         boolean ok = true;
 
-        if (x < -3 || x > 5) {
+        if (px < -3 || px > 5) {
             ctx.addMessage(null, new FacesMessage(
                     FacesMessage.SEVERITY_ERROR,
                     "X должен быть в диапазоне [-3; 5]", null));
             ok = false;
         }
-        if (y < -4 || y > 4) {
+        if (py < -4) {
             ctx.addMessage(null, new FacesMessage(
                     FacesMessage.SEVERITY_ERROR,
-                    "Y должен быть в диапазоне [-4; 4]", null));
+                    "Y не может быть меньше -4", null));
+            ok = false;
+        } else if (py > 4) {
+            ctx.addMessage(null, new FacesMessage(
+                    FacesMessage.SEVERITY_ERROR,
+                    "Y не может быть больше 4", null));
             ok = false;
         }
-        if (r < 1 || r > 4 || Math.abs(r * 2 - Math.round(r * 2)) > 1e-9) {
+
+        if (pr < 1 || pr > 4 || Math.abs(pr * 2 - Math.round(pr * 2)) > 1e-9) {
             ctx.addMessage(null, new FacesMessage(
                     FacesMessage.SEVERITY_ERROR,
                     "R должен быть от 1 до 4 с шагом 0.5", null));
@@ -100,9 +118,10 @@ public class ResultControllerBean implements Serializable {
         return ok;
     }
 
+
     public double getX() { return x; }
     public void setX(double x) {
-        if (Math.abs(x) < 1e-9) {
+        if (Math.abs(x) < 1e-9) { // может быть -0 поэтому так
             x = 0.0;
         }
         this.x = x;
@@ -111,11 +130,15 @@ public class ResultControllerBean implements Serializable {
 
     public double getY() { return y; }
     public void setY(double y) {
-        long rounded = Math.round(y);
-        if (rounded < -4) rounded = -4;
-        if (rounded > 4)  rounded = 4;
-        this.y = rounded;
+        if (y < -4) y = -4;
+        if (y > 4) y = 4;
+        if (Math.abs(y) < 1e-9) {
+            y = 0.0;
+        }
+
+        this.y = y;
     }
+
 
     public double getR() { return r; }
 
@@ -137,5 +160,25 @@ public class ResultControllerBean implements Serializable {
         this.r = 1.0 + (currentR - 1) * 0.5;
     }
 
-    public List<ResultEntity> getResults() { return results; }
+    public List<ResultEntity> getResults() {
+        return results;
+    }
+
+    public double getGraphX() {
+        return graphX;
+    }
+    public void setGraphX(double graphX) {
+        this.graphX = graphX;
+    }
+
+    public double getGraphY() {
+        return graphY;
+    }
+    public void setGraphY(double graphY) {
+        this.graphY = graphY;
+    }
+
+
 }
+
+

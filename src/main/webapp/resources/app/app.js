@@ -3,7 +3,7 @@
 //  часики
 function updateClock(id) {
     const e = document.getElementById(id);
-    if (!e) return;
+    if (!e) return; // выхожу
 
     const d = new Date();
     const s =
@@ -29,7 +29,6 @@ function handleGraphClick(e) {
         msg.style.color = text ? "red" : "";
     }
 
-
     const rEl = document.getElementById("mainForm:rValue");
     const r = parseFloat((rEl && rEl.value) || "NaN");
 
@@ -43,44 +42,36 @@ function handleGraphClick(e) {
     const px = e.clientX - rect.left;
     const py = e.clientY - rect.top;
 
+    const centerX = rect.width / 2;   //  х в середине свг
+    const centerY = rect.height / 2;  //  y в середине свг
+    const scalePx = rect.width / 3;   //
 
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-    const scalePx = rect.width / 3;
-
-    // перевожу пиксели в координаты
     let x = ((px - centerX) / scalePx) * r;
-    let yReal = ((centerY - py) / scalePx) * r;
+    let y = ((centerY - py) / scalePx) * r;
 
-    // убираем -0
     if (Math.abs(x) < 1e-6) x = 0;
-    if (Math.abs(yReal) < 1e-6) yReal = 0;
+    if (Math.abs(y) < 1e-6) y = 0;
 
-    // тут выбираб ближайший
-    const allowedY = [-4, -3, -2, -1, 0, 1, 2, 3, 4];
-    let y = allowedY[0];
-    let minDiff = Math.abs(yReal - y);
-    for (let i = 1; i < allowedY.length; i++) {
-        const diff = Math.abs(yReal - allowedY[i]);
-        if (diff < minDiff) {
-            minDiff = diff;
-            y = allowedY[i];
-        }
-    }
+    // тут бэк
+    const gx = document.getElementById("mainForm:graphX");
+    if (gx) gx.value = x;
 
+    const gy = document.getElementById("mainForm:graphY");
+    if (gy) gy.value = y;
+
+    // тут визуал
     const xInput = document.getElementById("mainForm:x");
-    if (xInput) xInput.value = x.toFixed(3);
+    if (xInput) xInput.value = x.toFixed(3);   // в окне не на серваке
 
     const yHidden = document.getElementById("mainForm:yValue");
     if (yHidden) yHidden.value = y;
 
     const yOut = document.getElementById("mainForm:yOut");
-    if (yOut) yOut.textContent = String(y);
+    if (yOut) yOut.textContent = y.toFixed(3);
 
     const ySlider = document.getElementById("ySlider");
     if (ySlider) ySlider.value = y;
 
-    // жмву скрытую кнопку
     const hiddenSubmit = document.getElementById("mainForm:hiddenSubmit");
     if (hiddenSubmit) hiddenSubmit.click();
 }
@@ -89,8 +80,10 @@ function handleGraphClick(e) {
 
 
 
-document.addEventListener("DOMContentLoaded", function () {
-    // часы, если есть элемент #clock
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+    // часы если есть элемент #clock
     if (document.getElementById("clock")) {
         updateClock("clock");
         setInterval(function () {
